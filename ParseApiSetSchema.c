@@ -46,7 +46,7 @@ __declspec(dllexport) DWORD parser(char *filename)
     WriteFile(file, CSV_FILE_HEADERS, sizeof(CSV_FILE_HEADERS)-2, NULL, NULL);
 
     BYTE *baseAddress = LoadLibraryW(SCHEMA_FILENAME);
-    if (baseAddress == NULL) return;
+    if (baseAddress == NULL) { CloseHandle(file); return 0; }
 
     IMAGE_DOS_HEADER* idh = baseAddress;
     IMAGE_NT_HEADERS64* inth = baseAddress + idh->e_lfanew;
@@ -73,6 +73,7 @@ __declspec(dllexport) DWORD parser(char *filename)
     }
 
     CloseHandle(file);
-
+    FreeLibrary(baseAddress);
+    
     return implsets;
 }
